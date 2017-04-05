@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Unofficial Westmont App</string>
+	<string name="account">Konto</string>
+	<string name="action_sign_in">Anmelden</string>
+	<string name="action_sign_in_short">Anmelden</string>
+	<string name="error_incorrect_username_password">Eingegebene Benutzername oder Kennwort ist falsch</string>
+	<string name="error_password_required">Kennwort erförderlich</string>
+	<string name="error_signing_in">Mit die anmeldung war ein Fehler aufgetreten. Versuch es noch einmal</string>
+	<string name="error_username_required">Benutzername ist erförderlich</string>
+	<string name="permission_rationale"></string>
+	<string name="prompt_device_name">Dein Name für dieses Gerät</string>
+	<string name="prompt_password">Kennwort</string>
+	<string name="title_activity_login">Anmelden</string>
+	<string name="prompt_username">Benutzername (Email benutzername für Westmont)</string>
+	<string name="account_name">Westmont</string>
+</resources>

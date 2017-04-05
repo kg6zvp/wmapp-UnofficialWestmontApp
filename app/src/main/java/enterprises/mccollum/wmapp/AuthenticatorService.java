@@ -11,6 +11,8 @@ public class AuthenticatorService extends Service {
 	public static final String KEY_TOKEN_REAL = "token";
 	public static final String KEY_TOKEN_SIGNATURE = "signature";
 	
+	public static final String TOKEN_SYNC_PROVIDER = "enterprises.mccollum.wmapp.token.provider";
+	
 	private LoginAuthenticator mAuth;
 	
 	public AuthenticatorService() {

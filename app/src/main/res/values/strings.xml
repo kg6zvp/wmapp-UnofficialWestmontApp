@@ -13,4 +13,5 @@
 	<string name="error_username_required">Username is required</string>
 	<string name="error_password_required">Password required</string>
 	<string name="error_signing_in">Error signing in. Try again</string>
+	<string name="account">Account</string>
 </resources>
