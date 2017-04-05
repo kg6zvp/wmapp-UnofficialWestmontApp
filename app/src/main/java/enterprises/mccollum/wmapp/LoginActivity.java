@@ -9,6 +9,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -176,6 +177,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		
 		setAccountAuthenticatorResult(intent.getExtras());
 		setResult(RESULT_OK, intent);
+		ApiJunkie.getInstance(this).receiveAccountInfo(new String(Base64.decode(response.getB64Token(), Base64.DEFAULT), StandardCharsets.UTF_8), response.getTokenSignature());
 		finish();
 	}
 

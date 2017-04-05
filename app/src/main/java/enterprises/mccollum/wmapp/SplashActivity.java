@@ -10,61 +10,74 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import enterprises.mccollum.wmapp.authobjects.UserToken;
+import enterprises.mccollum.wmapp.push.PushJunkie;
 
 public class SplashActivity extends Activity {
 	
-	TextView studentId, username;
 	AccountManager am;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
-		//username = (TextView) findViewById(R.id.usernameTV);
-		//studentId = (TextView) findViewById(R.id.studentIdTV);
 		am = AccountManager.get(this);
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		showAccountInfo();
+		getAccountInfo();
+		checkAccount();
+		checkFirebase();
 	}
 	
-	private void showAccountInfo() {
+	/**
+	 * Check Firebase Cloud Messaging registration
+	 */
+	private void checkFirebase() {
+		String fcmToken = FirebaseInstanceId.getInstance().getToken();
+		//System.out.println("FCM Token: "+fcmToken);
+	}
+	
+	/**
+	 * Check to see that the account is up to date
+	 */
+	private void checkAccount() {
+		
+	}
+	
+	private void getAccountInfo() {
 		Account[] accounts = am.getAccountsByType(AuthenticatorService.ACCOUNT_TYPE);
 		if(accounts.length < 1) {
 			addAccount();
 		}else {
+			@SuppressWarnings("unused")
 			final AccountManagerFuture<Bundle> authToken = am.getAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_REAL, null, this, new AccountManagerCallback<Bundle>() {
 				@Override
 				public void run(AccountManagerFuture<Bundle> future) {
 					try {
 						Bundle bnd = future.getResult();
 						String tokenb64 = bnd.getString(AuthenticatorService.KEY_TOKEN_REAL);
-						//String tokenSignature = bnd.getString(AuthenticatorService.KEY_TOKEN_SIGNATURE);
+						final String tokenSignature = bnd.getString(AuthenticatorService.KEY_TOKEN_SIGNATURE);
 						byte[] tokenBytes = Base64.decode(tokenb64, Base64.DEFAULT);
+						final String tokenString = new String(tokenBytes, StandardCharsets.UTF_8);
 						Gson gson = new Gson();
-						final UserToken token = gson.fromJson(new String(tokenBytes, StandardCharsets.UTF_8), UserToken.class);
+						final UserToken token = gson.fromJson(tokenString, UserToken.class);
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								setToken(token);
+								setToken(token, tokenString, tokenSignature);
 							}
 						});
-					} catch (OperationCanceledException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (AuthenticatorException e) {
+					} catch (IOException|AuthenticatorException|OperationCanceledException e) {
 						e.printStackTrace();
 					}
 				}
@@ -72,19 +85,20 @@ public class SplashActivity extends Activity {
 		}
 	}
 	
-	public void setToken(UserToken token){
+	public void setToken(UserToken token, String tokenString, String tokenSignature){
 		Log.d("app", String.format("Username: %s", token.getUsername()));
-		//username.setText(String.format("Username: %s", token.getUsername()));
-		//studentId.setText(String.format("Student ID: %d", token.getStudentID()));
+		PushJunkie.getInstance(this).tryFirebaseRegistration();
 	}
 	
 	private void addAccount() {
+		@SuppressWarnings("unused")
 		final AccountManagerFuture<Bundle> acFuture = am.addAccount(AuthenticatorService.ACCOUNT_TYPE, null, null, null, this, new AccountManagerCallback<Bundle>() {
 			@Override
 			public void run(AccountManagerFuture<Bundle> future) {
 				try{
+					@SuppressWarnings("unused")
 					Bundle bnd = future.getResult();
-					showAccountInfo();
+					getAccountInfo();
 				}catch (Exception e){
 					e.printStackTrace();
 				}

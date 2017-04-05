@@ -1,0 +1,129 @@
+{
+  "project_info": {
+    "project_number": "653658321849",
+    "firebase_url": "https://westmont-app.firebaseio.com",
+    "project_id": "westmont-app",
+    "storage_bucket": "westmont-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653658321849:android:f6e3be1133288523",
+        "android_client_info": {
+          "package_name": "westmont.westmontapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653658321849-24f8knk1m1hradr63c03sp7dfddismeg.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "653658321849-93vq5hj605avrhg4urihlv382b724ek0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYqb4OjJ9oWUevI6dikk5vExMx1PXy9dA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653658321849:android:d4a70c1fdfa536d3",
+        "android_client_info": {
+          "package_name": "edu.westmont.westmontapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653658321849-24f8knk1m1hradr63c03sp7dfddismeg.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "653658321849-93vq5hj605avrhg4urihlv382b724ek0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYqb4OjJ9oWUevI6dikk5vExMx1PXy9dA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653658321849:android:81eea9655367d5af",
+        "android_client_info": {
+          "package_name": "enterprises.mccollum.wmapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653658321849-5tvavrj7facstm3hjrausutbrr75on57.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "enterprises.mccollum.wmapp",
+            "certificate_hash": "61809347926859e67b4cec36d96a89baeece0463"
+          }
+        },
+        {
+          "client_id": "653658321849-24f8knk1m1hradr63c03sp7dfddismeg.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "653658321849-93vq5hj605avrhg4urihlv382b724ek0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYqb4OjJ9oWUevI6dikk5vExMx1PXy9dA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "653658321849-24f8knk1m1hradr63c03sp7dfddismeg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

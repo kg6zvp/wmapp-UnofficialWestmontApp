@@ -40,7 +40,13 @@ public class LoginAuthenticator extends AbstractAccountAuthenticator {
 		
 		renewalDifference = laterTime - earlyTime;
 	}
-
+	
+	/**
+	 * Return an activity to edit properties like profile picture, etc.
+	 * @param response
+	 * @param accountType
+	 * @return
+	 */
 	@Override
 	public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
 		throw new UnsupportedOperationException();
@@ -91,8 +97,9 @@ public class LoginAuthenticator extends AbstractAccountAuthenticator {
 		Gson gson = new Gson();
 		UserToken token = gson.fromJson(new String(tokenBytes, StandardCharsets.UTF_8), UserToken.class);
 		
-		if(token.getExpirationDate() <= System.currentTimeMillis()) //if it's expired, ask for authentication again
+		if(token.getExpirationDate() <= System.currentTimeMillis()) { //if it's expired, ask for authentication again
 			return getAddIntent(response, false);
+		}
 		
 		if((token.getExpirationDate()-renewalDifference) <= System.currentTimeMillis()){
 			//renew token
@@ -114,7 +121,16 @@ public class LoginAuthenticator extends AbstractAccountAuthenticator {
 	public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
 		return null;
 	}
-
+	
+	/**
+	 * Please figure out what in the world this thing is
+	 *
+	 * @param response
+	 * @param account
+	 * @param features
+	 * @return
+	 * @throws NetworkErrorException
+	 */
 	@Override
 	public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
 		return null;
