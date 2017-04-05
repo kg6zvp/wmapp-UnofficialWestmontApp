@@ -88,6 +88,8 @@ public class SplashActivity extends Activity {
 	public void setToken(UserToken token, String tokenString, String tokenSignature){
 		Log.d("app", String.format("Username: %s", token.getUsername()));
 		PushJunkie.getInstance(this).tryFirebaseRegistration();
+		//TODO: Start Main Activity
+		finish();
 	}
 	
 	private void addAccount() {
