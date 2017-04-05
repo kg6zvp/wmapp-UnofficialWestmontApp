@@ -133,7 +133,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 					case 200:
 						receiveResponse(response);
 						break;
-					case 403:
+					case 401:
 						showProgress(false);
 						mUsernameView.setError(getString(R.string.error_incorrect_username_password));
 						mPasswordView.setText("");
@@ -153,6 +153,24 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		}, new Response.ErrorListener(){
 			@Override
 			public void onErrorResponse(VolleyError error) {
+				showProgress(false);
+				switch(error.networkResponse.statusCode){
+					case 401:
+						showProgress(false);
+						mUsernameView.setError(getString(R.string.error_incorrect_username_password));
+						mPasswordView.setText("");
+						mPasswordView.setError(getString(R.string.error_incorrect_username_password));
+						mPasswordView.requestFocus();
+						break;
+					case 500:
+						showProgress(false);
+						mPasswordView.setError(getString(R.string.error_signing_in));
+						mPasswordView.requestFocus();
+						break;
+					default:
+						showProgress(false);
+						Toast.makeText(getApplicationContext(), "Not sure what's happened.", Toast.LENGTH_LONG).show();
+				}
 			}
 		}));
     }
@@ -227,8 +245,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 	
 		@Override
 		protected Response<TokenResponseContainer> parseNetworkResponse(NetworkResponse response) {
-			if(response.statusCode >= 400)
-				return Response.error(new VolleyError(response));
+			if(response.statusCode >= 500)
+				return Response.error(new VolleyError(response));//*/
 			
 			TokenResponseContainer con = new TokenResponseContainer();
 			con.setToken(response.data);
