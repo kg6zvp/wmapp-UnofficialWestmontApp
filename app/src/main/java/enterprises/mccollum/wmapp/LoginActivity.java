@@ -190,6 +190,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		setResult(RESULT_OK, intent);
 		ApiJunkie.getInstance(this).receiveAccountInfo(new String(Base64.decode(response.getB64Token(), Base64.DEFAULT), StandardCharsets.UTF_8), response.getTokenSignature());
 		//ContentResolver.setMasterSyncAutomatically(true);
+		ContentResolver.setSyncAutomatically(account, AuthenticatorService.TOKEN_SYNC_PROVIDER, true);
 		//ContentResolver.requestSync(account, AuthenticatorService.TOKEN_SYNC_PROVIDER, Bundle.EMPTY);
 		finish();
 	}
