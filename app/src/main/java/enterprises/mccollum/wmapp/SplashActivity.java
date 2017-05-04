@@ -7,6 +7,7 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import enterprises.mccollum.wmapp.authobjects.UserToken;
 import enterprises.mccollum.wmapp.push.PushJunkie;
 import enterprises.mccollum.wmapp.shuttle.control.ShuttleDataListener;
+import enterprises.mccollum.wmapp.shuttle.control.ShuttleDataSyncService;
 import enterprises.mccollum.wmapp.shuttle.control.ShuttleJunkie;
 import enterprises.mccollum.wmapp.shuttle.model.ShuttlePersistenceManager;
 
@@ -36,10 +38,9 @@ public class SplashActivity extends Activity implements ShuttleDataListener {
 		super.onCreate(savedInstanceState);
 		initEntityManagers();
 		setContentView(R.layout.activity_splash);
+		ShuttlePersistenceManager.getInstance(this.getApplicationContext()); //init db
 		am = AccountManager.get(this);
 	}
-	
-	ShuttleJunkie sj;
 	
 	@Override
 	protected void onResume() {
@@ -48,6 +49,7 @@ public class SplashActivity extends Activity implements ShuttleDataListener {
 		checkAccount();
 		checkFirebase();
 		ShuttleJunkie.getInstance(this.getApplicationContext()).updateStatic(this);
+		//if(ApiJunkie.getInstance(this).hasCredentials())
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class SplashActivity extends Activity implements ShuttleDataListener {
 			addAccount();
 		}else {
 			@SuppressWarnings("unused")
-			final AccountManagerFuture<Bundle> authToken = am.getAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_REAL, null, this, new AccountManagerCallback<Bundle>() {
+			/*final AccountManagerFuture<Bundle> authToken = am.getAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_REAL, null, this, new AccountManagerCallback<Bundle>() {
 				@Override
 				public void run(AccountManagerFuture<Bundle> future) {
 					try {
@@ -92,7 +94,13 @@ public class SplashActivity extends Activity implements ShuttleDataListener {
 						e.printStackTrace();
 					}
 				}
-			}, null);
+			}, null);//*/
+			String tokenb64 = am.peekAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_REAL);
+			final String tokenSignature = am.peekAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_SIGNATURE);
+			byte[] tokenBytes = Base64.decode(tokenb64, Base64.DEFAULT);
+			final String tokenString = new String(tokenBytes, StandardCharsets.UTF_8);
+			UserToken token = new Gson().fromJson(tokenString, UserToken.class);
+			setToken(token, tokenString, tokenSignature);
 		}
 	}
 	
@@ -100,6 +108,7 @@ public class SplashActivity extends Activity implements ShuttleDataListener {
 		Log.d("app", String.format("Username: %s", token.getUsername()));
 		PushJunkie.getInstance(this).tryFirebaseRegistration();
 		//TODO: Start Main Activity
+		//finish();
 	}
 	
 	private void addAccount() {

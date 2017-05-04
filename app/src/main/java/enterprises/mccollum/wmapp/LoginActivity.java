@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 
 import enterprises.mccollum.wmapp.auth.AuthJunkie;
 import enterprises.mccollum.wmapp.authobjects.TokenResponseContainer;
+import enterprises.mccollum.wmapp.shuttle.control.ShuttleDataSyncService;
 
 /**
  * A login screen that offers login via email/password.
@@ -194,6 +195,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 		//ContentResolver.setMasterSyncAutomatically(true);
 		ContentResolver.setSyncAutomatically(account, AuthenticatorService.TOKEN_SYNC_PROVIDER, true);
 		//ContentResolver.requestSync(account, AuthenticatorService.TOKEN_SYNC_PROVIDER, Bundle.EMPTY);
+		//ContentResolver.setSyncAutomatically(account, ShuttleDataSyncService.SHUTTLE_SYNC_PROVIDER, true);
 		finish();
 	}
 

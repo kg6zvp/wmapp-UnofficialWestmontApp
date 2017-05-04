@@ -4,13 +4,27 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-public class ShuttleDataService extends Service {
-	public ShuttleDataService() {
+import enterprises.mccollum.wmapp.model.ShuttleSyncAdapter;
+
+public class ShuttleDataSyncService extends Service {
+	private static final Object sAdapLock = new Object();
+	public static final String SHUTTLE_SYNC_PROVIDER = "enterprises.mccollum.wmapp.shuttle.provider";
+	private static ShuttleSyncAdapter ssa = null;
+	
+	public ShuttleDataSyncService() {
+	}
+	
+	@Override
+	public void onCreate() {
+		synchronized (sAdapLock){
+			if(ssa == null){
+				ssa = new ShuttleSyncAdapter(getApplicationContext(), true);
+			}
+		}
 	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO: Return the communication channel to the service.
-		throw new UnsupportedOperationException("Not yet implemented");
+		return ssa.getSyncAdapterBinder();
 	}
 }
