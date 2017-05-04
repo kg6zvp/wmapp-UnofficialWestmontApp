@@ -64,6 +64,8 @@ public class ShuttleJunkie {
 	
 	public void updateStatic(ShuttleDataListener listener){
 		this.listener = listener;
+		/*if(!ApiJunkie.getInstance(ctx).hasCredentials())
+			return;//*/
 		System.out.println("Updating static content");
 		/*getRequestQueue().add(
 				buildPhysicalStopRequest()
@@ -72,10 +74,10 @@ public class ShuttleJunkie {
 		ApiJunkie.getInstance(ctx).addRequestToQueue(buildPhysicalStopRequest());
 	}
 	
-	List<PhysicalStopShadow> physicalStopShadows;
-	List<RouteShadow> routeShadows;
-	List<SequentialStopShadow> sequentialStopShadows;
-	List<ScheduledStopShadow> scheduledStopShadows;
+	List<PhysicalStopShadow> physicalStopShadows = null;
+	List<RouteShadow> routeShadows = null;
+	List<SequentialStopShadow> sequentialStopShadows = null;
+	List<ScheduledStopShadow> scheduledStopShadows = null;
 	
 	/**
 	 * 0.)
@@ -177,7 +179,7 @@ public class ShuttleJunkie {
 		}
 	}
 	
-	private StringRequest buildPhysicalStopRequest() {
+	public StringRequest buildPhysicalStopRequest() {
 		return new StringRequest(JaxDirectory.PHYSICAL_STOPS_PATH,
 			new Response.Listener<String>() {
 				@Override

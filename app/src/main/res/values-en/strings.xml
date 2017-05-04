@@ -2,4 +2,5 @@
 <resources>
 	<string name="app_name">Unofficial Westmont App</string>
 	<string name="account_name">Westmont</string>
+	<string name="shuttle_data">Shuttle Data</string>
 </resources>

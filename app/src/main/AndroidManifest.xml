@@ -75,11 +75,26 @@
 				<action android:name="com.google.firebase.MESSAGING_EVENT"/>
 			</intent-filter>
 		</service>
+		
 		<service
-			android:name=".shuttle.control.ShuttleDataService"
+			android:name=".shuttle.control.ShuttleDataSyncService"
 			android:enabled="true"
 			android:exported="true">
+			<intent-filter>
+				<action android:name="android.content.SyncAdapter"/>
+			</intent-filter>
+			
+			<meta-data
+				android:name="android.content.SyncAdapter"
+				android:resource="@xml/shuttlesyncadapter"/>
 		</service>
+		
+		<provider
+			android:name=".shuttle.horizon.ShuttleDataProvider"
+			android:authorities="enterprises.mccollum.wmapp.shuttle.provider"
+			android:exported="true"
+			android:label="@string/shuttle_data"
+			android:syncable="true" />
 	</application>
 
 </manifest>

@@ -14,4 +14,5 @@
 	<string name="error_password_required">Password required</string>
 	<string name="error_signing_in">Error signing in. Try again</string>
 	<string name="account">Account</string>
+	<string name="shuttle_data">Shuttle Data</string>
 </resources>
