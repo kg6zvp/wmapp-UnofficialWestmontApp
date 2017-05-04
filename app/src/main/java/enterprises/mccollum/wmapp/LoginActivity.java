@@ -147,6 +147,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				showProgress(false);
+				if(error.networkResponse == null)
+					error.printStackTrace();
 				switch(error.networkResponse.statusCode){
 					case 401:
 						showProgress(false);

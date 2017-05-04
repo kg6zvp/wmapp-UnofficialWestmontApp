@@ -16,14 +16,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import enterprises.mccollum.wmapp.API_URLs;
 import enterprises.mccollum.wmapp.ApiJunkie;
 
 /**
  * Created by smccollum on 04.04.17.
  */
 public class PushJunkie {
-	private static final String PUSH_API_BASE = "http://push.wmapp.mccollum.enterprises/api";
-	private static final String REGISTRATION_URL = PUSH_API_BASE+"/reg/client";
+	private static final String REGISTRATION_URL = API_URLs.PUSH_API_BASE+"/reg/client";
 	private static final String LOG_TAG = "PushJunkie";
 	private static PushJunkie myInst;
 	

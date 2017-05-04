@@ -1,0 +1,11 @@
+<resources>
+	<string name="app_name">WCSA</string>
+	
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="motion_for_vote">Move to Vote</string>
+	<string name="vote_present">Present</string>
+	<string name="motion_second">Second</string>
+	<string name="motion_object">Object</string>
+	<string name="cast_ballot">Cast Ballot</string>
+</resources>

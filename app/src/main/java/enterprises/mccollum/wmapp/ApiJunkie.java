@@ -1,26 +1,24 @@
 package enterprises.mccollum.wmapp;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.util.Base64;
 import android.util.LruCache;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HttpClientStack;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.security.KeyStore;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 import enterprises.mccollum.wmapp.authobjects.UserToken;
 
@@ -28,7 +26,6 @@ import enterprises.mccollum.wmapp.authobjects.UserToken;
  * Created by smccollum on 13.03.17.
  */
 public class ApiJunkie implements AcctInfoReceiver {
-	public static final String AUTH_BASE_URL = "http://auth.wmapp.mccollum.enterprises";
 	public static final String BODY_CONTENT_TYPE_JSON_UTF8 = "application/json; charset=utf-8";
 	private static ApiJunkie myInst;
 	
@@ -60,7 +57,8 @@ public class ApiJunkie implements AcctInfoReceiver {
 	
 	public RequestQueue getRequestQueue() {
 		if(reqQueue == null)
-			reqQueue = Volley.newRequestQueue(getCtx().getApplicationContext());
+			//reqQueue = Volley.newRequestQueue(getCtx().getApplicationContext(), new HttpClientStack());
+			reqQueue = Volley.newRequestQueue(getCtx().getApplicationContext()); //, new HurlStack(null, newSslSocketFactory()));
 		return reqQueue;
 	}
 	
@@ -86,21 +84,14 @@ public class ApiJunkie implements AcctInfoReceiver {
 	
 	public <T> void addRequestToQueue(Request<T> request) {
 		if(hasCredentials()){
-			addRequestToQueue(request, tokenString, tokenSignature);
-		}else {
-			getRequestQueue().add(request);
-			getRequestQueue().start();
+			try {
+				request.getHeaders().put(UserToken.TOKEN_HEADER, tokenString);
+				request.getHeaders().put(UserToken.SIGNATURE_HEADER, tokenSignature);
+			} catch (AuthFailureError authFailureError) {
+				authFailureError.printStackTrace();
+			}
 		}
-	}
-	
-	public <T> void addRequestToQueue(Request<T> request, String tokenString, String tokenSignature){
-		try{
-			request.getHeaders().put(UserToken.TOKEN_HEADER, tokenString);
-			request.getHeaders().put(UserToken.SIGNATURE_HEADER, tokenSignature);
-			getRequestQueue().add(request);
-		} catch (AuthFailureError authFailureError) {
-			authFailureError.printStackTrace();
-		}
+		getRequestQueue().add(request);
 		getRequestQueue().start();
 	}
 	

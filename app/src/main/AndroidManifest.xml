@@ -1,78 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="enterprises.mccollum.wmapp">
-    
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+		  package="enterprises.mccollum.wmapp">
+	
+	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.READ_PROFILE"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    
-    <uses-permission
-        android:name="android.permission.USE_CREDENTIALS"
-        android:maxSdkVersion="22"/>
-    
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login">
-        </activity>
-        <activity android:name=".SplashActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-        
-        <service
-            android:name=".AuthenticatorService"
-            android:enabled="true"
-            android:exported="true">
+	
+	<!-- To auto-complete the email text field in the login form with the user's emails -->
+	<uses-permission android:name="android.permission.READ_PROFILE"/>
+	<uses-permission android:name="android.permission.READ_CONTACTS"/>
+	<uses-permission
+		android:name="android.permission.USE_CREDENTIALS"
+		android:maxSdkVersion="22"/>
+	
+	<application
+		android:allowBackup="true"
+		android:icon="@mipmap/ic_launcher"
+		android:label="@string/app_name"
+		android:supportsRtl="true"
+		android:theme="@style/AppTheme">
+		<activity
+			android:name=".LoginActivity"
+			android:label="@string/title_activity_login">
+		</activity>
+		<activity android:name=".SplashActivity">
 			<intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator"
-                       android:resource="@xml/authenticator" />
-        </service>
-    
-        <service
-            android:name=".auth.TokenSyncService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
-            </intent-filter>
-            <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/tokensyncadapter" />
-        </service>
-        <provider
-            android:label="@string/account"
-            android:name=".auth.TokenContentProvider"
-            android:authorities="enterprises.mccollum.wmapp.token.provider"
-            android:exported="false"
-            android:syncable="true"/>
-        
-        <service android:name=".push.FBTokenDienst">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-        <service android:name=".push.FBMessagingDienst">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-    </application>
+				<action android:name="android.intent.action.MAIN"/>
+				
+				<category android:name="android.intent.category.LAUNCHER"/>
+			</intent-filter>
+		</activity>
+		
+		<service
+			android:name=".AuthenticatorService"
+			android:enabled="true"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.accounts.AccountAuthenticator"/>
+			</intent-filter>
+			
+			<meta-data
+				android:name="android.accounts.AccountAuthenticator"
+				android:resource="@xml/authenticator"/>
+		</service>
+		<service
+			android:name=".auth.TokenSyncService"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.content.SyncAdapter"/>
+			</intent-filter>
+			
+			<meta-data
+				android:name="android.content.SyncAdapter"
+				android:resource="@xml/tokensyncadapter"/>
+		</service>
+		
+		<provider
+			android:name=".auth.TokenContentProvider"
+			android:authorities="enterprises.mccollum.wmapp.token.provider"
+			android:exported="false"
+			android:label="@string/account"
+			android:syncable="true"/>
+		
+		<service android:name=".push.FBTokenDienst">
+			<intent-filter>
+				<action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+			</intent-filter>
+		</service>
+		<service android:name=".push.FBMessagingDienst">
+			<intent-filter>
+				<action android:name="com.google.firebase.MESSAGING_EVENT"/>
+			</intent-filter>
+		</service>
+		<service
+			android:name=".shuttle.control.ShuttleDataService"
+			android:enabled="true"
+			android:exported="true">
+		</service>
+	</application>
 
 </manifest>

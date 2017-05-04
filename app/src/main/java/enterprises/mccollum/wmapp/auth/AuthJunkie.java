@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import enterprises.mccollum.wmapp.API_URLs;
 import enterprises.mccollum.wmapp.ApiJunkie;
 import enterprises.mccollum.wmapp.authobjects.TokenResponseContainer;
 import enterprises.mccollum.wmapp.authobjects.UserToken;
@@ -22,7 +23,7 @@ import enterprises.mccollum.wmapp.authobjects.UserToken;
  */
 
 public class AuthJunkie {
-	public static final String RENEW_URL = ApiJunkie.AUTH_BASE_URL+"/api/token/renewToken";
+	public static final String RENEW_URL = API_URLs.AUTH_BASE_URL+"/api/token/renewToken";
 	
 	public static class RenewalRequest extends Request<TokenResponseContainer> {
 			private Response.Listener<TokenResponseContainer> listener;
@@ -73,7 +74,7 @@ public class AuthJunkie {
 		JSONObject loginObj;
 	
 		public LoginRequest(String username, String deviceName, String password, Response.Listener listener, Response.ErrorListener errorListener) {
-			super(Method.POST, ApiJunkie.AUTH_BASE_URL + "/api/token/getToken", errorListener);
+			super(Method.POST, API_URLs.AUTH_BASE_URL + "/api/token/getToken", errorListener);
 			this.listener = listener;
 			Map<String, String> params = new HashMap<>(3);
 			params.put("username", username);

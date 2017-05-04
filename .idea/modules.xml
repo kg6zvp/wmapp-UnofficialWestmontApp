@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/UnofficialWestmontApp.iml" filepath="$PROJECT_DIR$/UnofficialWestmontApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wcsa/wcsa.iml" filepath="$PROJECT_DIR$/wcsa/wcsa.iml" />
     </modules>
   </component>
 </project>

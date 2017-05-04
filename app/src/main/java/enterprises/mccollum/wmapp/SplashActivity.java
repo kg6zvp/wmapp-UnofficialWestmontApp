@@ -19,17 +19,27 @@ import java.nio.charset.StandardCharsets;
 
 import enterprises.mccollum.wmapp.authobjects.UserToken;
 import enterprises.mccollum.wmapp.push.PushJunkie;
+import enterprises.mccollum.wmapp.shuttle.control.ShuttleDataListener;
+import enterprises.mccollum.wmapp.shuttle.control.ShuttleJunkie;
+import enterprises.mccollum.wmapp.shuttle.model.ShuttlePersistenceManager;
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends Activity implements ShuttleDataListener {
 	
 	AccountManager am;
+	
+	protected void initEntityManagers(){
+		ShuttlePersistenceManager.getInstance(this);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initEntityManagers();
 		setContentView(R.layout.activity_splash);
 		am = AccountManager.get(this);
 	}
+	
+	ShuttleJunkie sj;
 	
 	@Override
 	protected void onResume() {
@@ -37,6 +47,7 @@ public class SplashActivity extends Activity {
 		getAccountInfo();
 		checkAccount();
 		checkFirebase();
+		ShuttleJunkie.getInstance(this.getApplicationContext()).updateStatic(this);
 	}
 	
 	/**
@@ -89,7 +100,6 @@ public class SplashActivity extends Activity {
 		Log.d("app", String.format("Username: %s", token.getUsername()));
 		PushJunkie.getInstance(this).tryFirebaseRegistration();
 		//TODO: Start Main Activity
-		finish();
 	}
 	
 	private void addAccount() {
@@ -106,5 +116,10 @@ public class SplashActivity extends Activity {
 				}
 			}
 		}, null);
+	}
+	
+	@Override
+	public void doneLoading() {
+		finish();
 	}
 }
