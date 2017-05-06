@@ -9,5 +9,5 @@ public interface AcctInfoReceiver {
 	 * <p>
 	 * If null is passed, the account doesn't exist
 	 */
-	void receiveAccountInfo(String tokenString, String tokenSignature);
+	void refreshTokens();
 }

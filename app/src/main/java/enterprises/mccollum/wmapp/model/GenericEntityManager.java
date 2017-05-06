@@ -73,6 +73,14 @@ public class GenericEntityManager<T, K> {
 		}
 	}
 	
+	public int size(){
+		try {
+			return (int) sprig.countOf();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public boolean isTableEmpty(){
 		try{
 			return (sprig.queryForAll().size() < 1);

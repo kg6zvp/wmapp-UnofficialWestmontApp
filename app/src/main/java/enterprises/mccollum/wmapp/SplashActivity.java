@@ -8,6 +8,7 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -24,6 +25,7 @@ import enterprises.mccollum.wmapp.shuttle.control.ShuttleDataListener;
 import enterprises.mccollum.wmapp.shuttle.control.ShuttleDataSyncService;
 import enterprises.mccollum.wmapp.shuttle.control.ShuttleJunkie;
 import enterprises.mccollum.wmapp.shuttle.model.ShuttlePersistenceManager;
+import enterprises.mccollum.wmapp.shuttle.view.ShuttleActivity;
 
 public class SplashActivity extends Activity implements ShuttleDataListener {
 	
@@ -127,8 +129,22 @@ public class SplashActivity extends Activity implements ShuttleDataListener {
 		}, null);
 	}
 	
+	boolean finishedSplash = false;
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		//if(ApiJunkie.getInstance(this).hasCredentials()) {
+		if(finishedSplash){
+			finish();
+		}
+	}
+	
 	@Override
 	public void doneLoading() {
-		finish();
+		//start main activity
+		finishedSplash = true;
+		Intent intent = new Intent(this, ShuttleActivity.class);
+		startActivity(intent);
 	}
 }

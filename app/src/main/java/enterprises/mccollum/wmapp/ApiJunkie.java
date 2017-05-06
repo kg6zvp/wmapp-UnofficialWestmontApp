@@ -1,7 +1,11 @@
 package enterprises.mccollum.wmapp;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Base64;
+import android.util.Log;
 import android.util.LruCache;
 
 import com.android.volley.AuthFailureError;
@@ -14,10 +18,12 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.StandardConstants;
 import javax.net.ssl.TrustManagerFactory;
 
 import enterprises.mccollum.wmapp.authobjects.UserToken;
@@ -27,20 +33,23 @@ import enterprises.mccollum.wmapp.authobjects.UserToken;
  */
 public class ApiJunkie implements AcctInfoReceiver {
 	public static final String BODY_CONTENT_TYPE_JSON_UTF8 = "application/json; charset=utf-8";
+	private static final String LOG_TAG = "ApiJunkie";
 	private static ApiJunkie myInst;
 	
 	private Context ctx;
 	
 	private RequestQueue reqQueue;
 	private ImageLoader imgLoader;
-
-	private UserToken token;
-	private String tokenString;
-	private String tokenSignature;
+	
+	private String tokenString = null;
+	private String tokenSignature = null;
+	private UserToken token = null;
 	
 	public static synchronized ApiJunkie getInstance(Context ctx){
-		if(myInst == null)
+		if(myInst == null) {
 			myInst = new ApiJunkie(ctx);
+			myInst.refreshTokens();
+		}
 		return myInst;
 	}
 	
@@ -85,8 +94,13 @@ public class ApiJunkie implements AcctInfoReceiver {
 	public <T> void addRequestToQueue(Request<T> request) {
 		if(hasCredentials()){
 			try {
-				request.getHeaders().put(UserToken.TOKEN_HEADER, tokenString);
-				request.getHeaders().put(UserToken.SIGNATURE_HEADER, tokenSignature);
+				if(request.getHeaders() == null)
+					Log.d(LOG_TAG, "Headers null");
+				else
+					Log.d(LOG_TAG, String.format("Headers size: %d", request.getHeaders().size()));
+				request.getHeaders().put(UserToken.TOKEN_HEADER, getTokenString());
+				request.getHeaders().put(UserToken.SIGNATURE_HEADER, getTokenSignature());
+				request.getHeaders().put("Content-Type", BODY_CONTENT_TYPE_JSON_UTF8);
 			} catch (AuthFailureError authFailureError) {
 				authFailureError.printStackTrace();
 			}
@@ -125,13 +139,17 @@ public class ApiJunkie implements AcctInfoReceiver {
 		}
 	}//*/
 	
-	public void receiveAccountInfo(String tokenString, String tokenSignature) {
+	public void refreshTokens(){
+		AccountManager am = AccountManager.get(ctx);
+		Account[] accounts = am.getAccountsByType(AuthenticatorService.ACCOUNT_TYPE);
+		if(accounts.length < 1)
+			return;
+		this.tokenString = new String(Base64.decode(am.peekAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_REAL), Base64.DEFAULT), StandardCharsets.UTF_8);
+		this.tokenSignature = am.peekAuthToken(accounts[0], AuthenticatorService.KEY_TOKEN_SIGNATURE);
 		this.token = new Gson().fromJson(tokenString, UserToken.class);
-		this.tokenString = tokenString;
-		this.tokenSignature = tokenSignature;
 	}
 	
-	/*public UserToken getToken() {
+	public UserToken getToken() {
 		return token;
 	}
 	
@@ -141,14 +159,18 @@ public class ApiJunkie implements AcctInfoReceiver {
 	
 	public String getTokenSignature() {
 		return tokenSignature;
-	}*/
+	}
 	
 	/**
 	 * Tell whether or not this ApiJunkie instance has received credentials
 	 * @return
 	 */
 	public boolean hasCredentials() {
-		return (tokenString != null && tokenSignature != null);
+		Log.d("ApiJunkie", String.format(
+				"hasCredentials(): %b",
+			(tokenSignature != null && tokenString != null)));
+		/*return (AccountManager.get(ctx).getAccountsByType(AuthenticatorService.ACCOUNT_TYPE).length > 0); //*/
+		return (tokenSignature != null && tokenString != null);
 	}
 	
 }

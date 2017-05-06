@@ -75,7 +75,6 @@
 				<action android:name="com.google.firebase.MESSAGING_EVENT"/>
 			</intent-filter>
 		</service>
-		
 		<service
 			android:name=".shuttle.control.ShuttleDataSyncService"
 			android:enabled="true"
@@ -94,7 +93,10 @@
 			android:authorities="enterprises.mccollum.wmapp.shuttle.provider"
 			android:exported="true"
 			android:label="@string/shuttle_data"
-			android:syncable="true" />
+			android:syncable="true"/>
+		
+		<activity android:name=".shuttle.view.ShuttleActivity">
+		</activity>
 	</application>
 
 </manifest>

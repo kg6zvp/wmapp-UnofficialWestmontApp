@@ -2,7 +2,9 @@ package enterprises.mccollum.wmapp.shuttle.control;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -11,16 +13,23 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import enterprises.mccollum.wmapp.ApiJunkie;
+import enterprises.mccollum.wmapp.R;
+import enterprises.mccollum.wmapp.control.GsonListRequest;
 import enterprises.mccollum.wmapp.shuttle.model.JaxDirectory;
 import enterprises.mccollum.wmapp.shuttle.model.PhysicalStop;
 import enterprises.mccollum.wmapp.shuttle.model.PhysicalStopShadow;
@@ -31,6 +40,7 @@ import enterprises.mccollum.wmapp.shuttle.model.ScheduledStopShadow;
 import enterprises.mccollum.wmapp.shuttle.model.SequentialStop;
 import enterprises.mccollum.wmapp.shuttle.model.SequentialStopShadow;
 import enterprises.mccollum.wmapp.shuttle.model.ShuttlePersistenceManager;
+import enterprises.mccollum.wmapp.shuttle.model.ShuttleReminder;
 
 /**
  * Created by smccollum on 02.05.17.
@@ -194,7 +204,16 @@ public class ShuttleJunkie {
 				Log.e(LOG_TAG, error.getMessage()+"Error in physical stop request");
 				error.printStackTrace();
 			}
-		});
+		}){
+			Map<String, String> headers;
+			
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				if(headers == null)
+					headers = new HashMap<String, String>();
+				return headers;
+			}
+		};
 	}
 	
 	private StringRequest buildRouteRequest() {
@@ -212,7 +231,16 @@ public class ShuttleJunkie {
 				Log.e(LOG_TAG, error.getMessage());
 				error.printStackTrace();
 			}
-		});
+		}){
+			Map<String, String> headers;
+			
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				if (headers == null)
+					headers = new HashMap<String, String>();
+				return headers;
+			}
+		};
 	}
 	
 	private StringRequest buildSequentialStopRequest() {
@@ -229,7 +257,16 @@ public class ShuttleJunkie {
 				public void onErrorResponse(VolleyError error) {
 					error.printStackTrace();
 				}
-		});
+		}){
+			Map<String, String> headers;
+			
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				if(headers == null)
+					headers = new HashMap<String, String>();
+				return headers;
+			}
+		};
 	}
 		
 	private StringRequest buildScheduledStopRequest() {
@@ -246,12 +283,102 @@ public class ShuttleJunkie {
 			public void onErrorResponse(VolleyError error) {
 				
 			}
-		});
+		}){
+			Map<String, String> headers;
+			
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				if(headers == null)
+					headers = new HashMap<String, String>();
+				return headers;
+			}
+		};
+	}
+	
+	public void subscribeToNotification(final Long seqStopId){
+		Log.d("ShJunkie", String.format("Subscribed to %d", seqStopId));
+		if(!ApiJunkie.getInstance(ctx).hasCredentials()) {
+			Toast.makeText(ctx, R.string.please_login, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		ApiJunkie.getInstance(ctx).addRequestToQueue(
+			new StringRequest(Request.Method.POST, JaxDirectory.REMINDERS_PATH, new Response.Listener<String>() {
+				@Override
+				public void onResponse(String response) {
+					ShuttleReminder rem = new Gson().fromJson(response, ShuttleReminder.class);
+					ShuttlePersistenceManager.getInstance(ctx).getReminders().persist(rem);
+				}
+				
+			}, new Response.ErrorListener() {
+				@Override
+				public void onErrorResponse(VolleyError error) {
+					
+				}
+			}){
+				Map<String, String> headers;
+				
+				@Override
+				public Map<String, String> getHeaders() throws AuthFailureError {
+					if(headers == null)
+						headers = new HashMap<String, String>();
+					return headers;
+				}
+				
+				@Override
+				public byte[] getBody() throws AuthFailureError {
+					ShuttleReminder rem = new ShuttleReminder();
+					rem.setSequentialStopId(seqStopId);
+					return new Gson().toJson(rem).getBytes(StandardCharsets.UTF_8);
+				}
+			}
+		);
 	}
 	
 	public void doSomething(){
 		if(!ApiJunkie.getInstance(ctx).hasCredentials())
 			return;
 		
+	}
+	
+	public void refreshStopTimes(final ShuttleAtomicDataListener listener) {
+		ApiJunkie.getInstance(ctx).addRequestToQueue(new JsonArrayRequest(JaxDirectory.SEQUENTIAL_STOPS_PATH, new Response.Listener<JSONArray>() {
+			@Override
+			public void onResponse(JSONArray response) {
+				int count = 0;
+				try {
+					JSONObject current = null;
+					for (int i = 0; i < response.length(); ++i) {
+						current = response.getJSONObject(i);
+						if(current.has("id") && current.has("currentEstimatedTime")){
+							Long stopId = current.getLong("id");
+							Long currentEstimatedTime = current.getLong("currentEstimatedTime");
+							Long lastUpdatedTime = current.getLong("lastUpdateTime");
+							SequentialStop ss = ShuttlePersistenceManager.getInstance(ctx).getSequentialStops().get(stopId);
+							ss.setLastUpdateTime(lastUpdatedTime);
+							ss.setCurrentEstimatedTime(currentEstimatedTime);
+							ShuttlePersistenceManager.getInstance(ctx).getSequentialStops().save(ss);
+							++count;
+						}
+					}
+				}catch (Exception e){
+					e.printStackTrace();
+				}//*/
+				if(listener != null)
+					listener.doneLoading(count);
+			}
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				
+			}
+		}){
+			Map<String, String> headers;
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				if(headers == null)
+					headers = new HashMap<String, String>();
+				return headers;
+			}
+		});
 	}
 }

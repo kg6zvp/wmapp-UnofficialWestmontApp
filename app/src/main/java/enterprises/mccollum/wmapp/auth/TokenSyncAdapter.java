@@ -71,7 +71,7 @@ public class TokenSyncAdapter extends AbstractThreadedSyncAdapter {
 			String nTokenString = new Gson().toJson(result.getToken());
 			String nTokenSignature = result.getTokenSignature();
 			Log.d(LOG_TAG, String.format("Result: %s", tokenString));
-			ApiJunkie.getInstance(getContext()).receiveAccountInfo(nTokenString, nTokenSignature);
+			ApiJunkie.getInstance(getContext()).refreshTokens();
 		} catch (ExecutionException|InterruptedException e) {
 			e.printStackTrace(); //TODO: Throw useful error into SyncAcapter land
 		}
